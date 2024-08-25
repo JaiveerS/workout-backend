@@ -1,10 +1,12 @@
 package com.jaiveer.workout.program;
 
 import com.jaiveer.workout.user.User;
+import com.jaiveer.workout.webClient.GeminiApiService;
 import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -14,10 +16,12 @@ import java.util.List;
 public class ProgramController {
 
     ProgramService programService;
+    GeminiApiService geminiApiService;
 
     @Autowired
-    public ProgramController(ProgramService programService) {
+    public ProgramController(ProgramService programService, GeminiApiService geminiApiService) {
         this.programService = programService;
+        this.geminiApiService = geminiApiService;
     }
 
     //returns workout program for a given user
@@ -35,5 +39,10 @@ public class ProgramController {
     @PostMapping("/create")
     public ResponseEntity<WorkoutProgram> generate(@RequestBody String username) {
         return ResponseEntity.ok(programService.createWorkoutProgram(username));
+    }
+
+    @GetMapping("/generateContent")
+    public String generateContent(@RequestBody String prompt) {
+        return geminiApiService.generateContent(prompt);
     }
 }
