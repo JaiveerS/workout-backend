@@ -17,7 +17,7 @@ public class Exercise {
     @Column(nullable = false)
     private String exerciseName;
     @Column(nullable = false)
-    private String sets;
+    private int sets;
     @Column(nullable = false)
     private String repetitions;
     private String description;
