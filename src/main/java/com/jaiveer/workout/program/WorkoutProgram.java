@@ -18,11 +18,11 @@ public class WorkoutProgram {
     @Id
     @GeneratedValue
     private Long programId;
+    @Column(nullable = false)
+    private Long userId;
     private String name;
+    //client should provide this
     private String duration;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Workout> workouts;
 }

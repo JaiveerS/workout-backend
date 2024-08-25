@@ -1,9 +1,6 @@
 package com.jaiveer.workout.program;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -12,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Data
+@Table(name = "exercises")
 public class Exercise {
     @Id
     @GeneratedValue

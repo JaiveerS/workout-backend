@@ -1,7 +1,11 @@
 package com.jaiveer.workout.user;
 
+import com.jaiveer.workout.program.WorkoutProgram;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -15,19 +19,19 @@ public class UserController {
 
     //need to fix to use spring security
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
+    public ResponseEntity<User> register(@RequestBody User user) {
         User registeredUser = userService.registerUser(user);
-        return registeredUser.toString();
+        return ResponseEntity.ok(registeredUser);
     }
 
 
     @GetMapping("/info")
-    public String info(@RequestBody String username) {
-        return userService.getUser(username).toString();
+    public ResponseEntity<User> info(@RequestBody String username) {
+        return ResponseEntity.ok(userService.getUser(username));
     }
 
     @GetMapping("/program")
-    public String program(@RequestBody String username) {
-        return userService.getUserProgram(username).toString();
+    public ResponseEntity<List<WorkoutProgram>> program(@RequestBody String username) {
+        return ResponseEntity.ok(userService.getUserProgram(username));
     }
 }

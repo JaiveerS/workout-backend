@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
+@Table(name = "workouts")
 public class Workout {
     @Id
     @GeneratedValue
