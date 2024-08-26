@@ -1,18 +1,14 @@
 package com.jaiveer.workout.program;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jaiveer.workout.user.User;
 import com.jaiveer.workout.user.UserService;
 import com.jaiveer.workout.webClient.GeminiApiService;
+import com.jaiveer.workout.webClient.GeminiResponse;
+import com.jaiveer.workout.webClient.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,19 +28,27 @@ public class ProgramService {
     //ask gemini ai to make a workout program and return it in json of a specifed format
     //this will create the workout program
     //later have sample programs for gemini to use to build programs
-    WorkoutProgram createWorkoutProgram(String username) {
+    WorkoutProgram createWorkoutProgram(String prompt, String username) {
         User user = userService.getUser(username);
         List<WorkoutProgram> workoutPrograms = userService.getUserProgram(username);
 
-        Mono<String> program = geminiApiService.generateContent("create a 6 day a week workout program for me. I want it to be a push pull legs split. use current best standards based on the scientific literature for the optimal number of sets per bodypart for both hypertrophy and strength gains. for exercises use science backed best exercises that are attributed the most amount of muscle growth while also taking into account recovery. for rest times provide me with rest times based on how tiring the previous exercise is cosidered in terms of systemic load and based on what the science says is the optimal rest time for muscle growth. make the first batch of push pull leg workouts different from the second.");
-        Mono<String> text = extractText(program);
+        GeminiResponse response = geminiApiService.generateContent(prompt);
+        System.out.println(response.toString());
+        Part text = response.getCandidates().get(0).getContent().getParts().get(0);
         //comment this out
-        System.out.println(text.block());
+        System.out.println(response.getCandidates().get(0).getContent().getParts().get(0).getText());
 
+        WorkoutProgram workoutProgramTemp = null;
+        try {
+            workoutProgramTemp = response.getCandidates().get(0).getContent().getParts().get(0).convertToWorkoutProgram();
+            System.out.println("converted to workoutProgram");
+        } catch (JsonProcessingException e) {
+            System.out.println("failed to convert to workoutProgram");
+            throw new RuntimeException(e);
+        }
 
-        WorkoutProgram workoutProgram = saveWorkoutProgram(text.block(), user);
-
-        workoutPrograms.add(workoutProgram);
+        workoutProgramTemp.setUserId(user.getUserid());
+        workoutPrograms.add(workoutProgramTemp);
         user.setWorkoutPrograms(workoutPrograms);
         userService.updateUser(user);
 
@@ -55,47 +59,5 @@ public class ProgramService {
         return workoutProgramRepository.findAll();
     }
 
-    public Mono<String> extractText(Mono<String> jsonMono) {
-        return jsonMono.flatMap(jsonString -> {
-            try {
-                JsonElement rootElement = JsonParser.parseString(jsonString);
-                JsonObject rootObject = rootElement.getAsJsonObject();
-                JsonObject firstCandidate = rootObject.getAsJsonArray("candidates").get(0).getAsJsonObject();
-                JsonObject contentObject = firstCandidate.getAsJsonObject("content");
-                JsonObject partsObject = contentObject.getAsJsonArray("parts").get(0).getAsJsonObject();
-                String text = partsObject.get("text").getAsString();
-                return Mono.just(text);
-            } catch (Exception e) {
-                return Mono.error(e);
-            }
-        });
-    }
-
-    public WorkoutProgram saveWorkoutProgram(String jsonData, User user) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            System.out.println("here start");
-            WorkoutProgram workoutProgram = objectMapper.readValue(jsonData, WorkoutProgram.class);
-            System.out.println("2");
-            List<WorkoutProgram> workoutPrograms = user.getWorkoutPrograms();
-            System.out.println("3");
-
-            workoutProgram.setUserId(user.getUserid());
-            System.out.println("4");
-
-            workoutPrograms.add(workoutProgram);
-            System.out.println("5");
-
-            user.setWorkoutPrograms(workoutPrograms);
-            userService.updateUser(user);
-            System.out.println("Data saved successfully!");
-            return workoutProgram;
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Error saving data: " + e.getMessage());
-        }
-        return null;
-    }
 
 }

@@ -18,14 +18,15 @@ public class GeminiApiService {
     @Autowired
     public GeminiApiService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
-//                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent")
-                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent")
+                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent")
+//                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent")
 
                 .defaultHeader("Content-Type", "application/json")
                 .build();
     }
 
-    public Mono<String> generateContent(String prompt) {
+    //dont change
+    public GeminiResponse generateContent(String prompt) {
         ObjectMapper objectMapper = new ObjectMapper();
         // Create schema
         ObjectNode schema = objectMapper.createObjectNode();
@@ -72,17 +73,17 @@ public class GeminiApiService {
 
         ObjectNode sets = objectMapper.createObjectNode();
         sets.put("description", "Number of sets for the exercise.");
-        sets.put("type", "number");
+        sets.put("type", "string");
         exerciseProperties.set("sets", sets);
 
         ObjectNode repetitions = objectMapper.createObjectNode();
         repetitions.put("description", "Number of repetitions per set.");
-        repetitions.put("type", "number");
+        repetitions.put("type", "string");
         exerciseProperties.set("repetitions", repetitions);
 
         ObjectNode restTime = objectMapper.createObjectNode();
         restTime.put("description", "Rest time between sets in seconds.");
-        restTime.put("type", "number");
+        restTime.put("type", "string");
         exerciseProperties.set("restTime", restTime);
 
         ObjectNode description = objectMapper.createObjectNode();
@@ -132,7 +133,8 @@ public class GeminiApiService {
                         .build())
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(GeminiResponse.class)
+                .block();
     }
 
 }
