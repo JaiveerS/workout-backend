@@ -43,6 +43,6 @@ public class ProgramController {
 
     @GetMapping("/generateContent")
     public String generateContent(@RequestBody String prompt) {
-        return geminiApiService.generateContent(prompt);
+        return geminiApiService.generateContent(prompt).block();
     }
 }
