@@ -16,6 +16,7 @@ public class Workout {
     @Id
     @GeneratedValue
     private Long workoutId;
+    private String workoutName;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exercise> exercises;
 }
