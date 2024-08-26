@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 public class GeminiApiService {
@@ -17,31 +18,48 @@ public class GeminiApiService {
     @Autowired
     public GeminiApiService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
-                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent")
+//                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent")
+                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent")
+
                 .defaultHeader("Content-Type", "application/json")
                 .build();
     }
 
-    public String generateContent(String prompt) {
+    public Mono<String> generateContent(String prompt) {
         ObjectMapper objectMapper = new ObjectMapper();
         // Create schema
         ObjectNode schema = objectMapper.createObjectNode();
-        schema.put("title", "Workout Program");
+        schema.put("name", "Create a Workout Program");
         schema.put("description", prompt);
-        schema.put("type", "array");
 
-        ObjectNode items = objectMapper.createObjectNode();
-        items.put("type", "object");
 
         ObjectNode properties = objectMapper.createObjectNode();
+        ObjectNode name = objectMapper.createObjectNode();
+        ObjectNode duration = objectMapper.createObjectNode();
+        ObjectNode workouts = objectMapper.createObjectNode();
+
+        name.put("description", "Name of the program.");
+        name.put("type", "string");
+
+        duration.put("description", "Duration of the program.");
+        duration.put("type", "string");
+
+        workouts.put("description", "List of workouts included in the program.");
+        workouts.put("type", "array");
+
+        properties.set("name", name);
+        properties.set("duration", duration);
+        properties.set("workouts", workouts);
+
+
+
         ObjectNode workoutName = objectMapper.createObjectNode();
         workoutName.put("description", "Name of the workout.");
         workoutName.put("type", "string");
-        properties.set("workout_name", workoutName);
+        workouts.set("workoutName", workoutName); //change this
 
-        ObjectNode exercises = objectMapper.createObjectNode();
-        exercises.put("description", "List of exercises included in the workout.");
-        exercises.put("type", "array");
+        workouts.put("description", "List of exercises included in the workout.");
+        workouts.put("type", "array");
 
         ObjectNode exerciseItems = objectMapper.createObjectNode();
         exerciseItems.put("type", "object");
@@ -50,7 +68,7 @@ public class GeminiApiService {
         ObjectNode exerciseName = objectMapper.createObjectNode();
         exerciseName.put("description", "Name of the exercise.");
         exerciseName.put("type", "string");
-        exerciseProperties.set("exercise_name", exerciseName);
+        exerciseProperties.set("exerciseName", exerciseName);
 
         ObjectNode sets = objectMapper.createObjectNode();
         sets.put("description", "Number of sets for the exercise.");
@@ -65,14 +83,19 @@ public class GeminiApiService {
         ObjectNode restTime = objectMapper.createObjectNode();
         restTime.put("description", "Rest time between sets in seconds.");
         restTime.put("type", "number");
-        exerciseProperties.set("rest_time", restTime);
+        exerciseProperties.set("restTime", restTime);
+
+        ObjectNode description = objectMapper.createObjectNode();
+        restTime.put("description", "explain the exercise");
+        restTime.put("type", "string");
+        exerciseProperties.set("description", description);
 
         exerciseItems.set("properties", exerciseProperties);
-        exerciseItems.put("required", objectMapper.createArrayNode().add("exercise_name").add("sets").add("repetitions").add("rest_time"));
+        exerciseItems.set("required", objectMapper.createArrayNode().add("exerciseName").add("sets").add("repetitions").add("restTime").add("description"));
         exerciseItems.put("additionalProperties", false);
 
-        exercises.set("items", exerciseItems);
-        properties.set("exercises", exercises);
+        workouts.set("exercises", exerciseItems);
+        properties.set("workouts", workouts);
 
         schema.set("properties", properties);
         schema.put("additionalProperties", false);
@@ -109,8 +132,7 @@ public class GeminiApiService {
                         .build())
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToMono(String.class)
-                .block();
+                .bodyToMono(String.class);
     }
 
 }
