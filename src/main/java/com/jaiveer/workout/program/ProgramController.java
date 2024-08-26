@@ -41,7 +41,7 @@ public class ProgramController {
         return ResponseEntity.ok(programService.createWorkoutProgram(username));
     }
 
-    @GetMapping("/generateContent")
+    @PostMapping("/generateContent")
     public String generateContent(@RequestBody String prompt) {
         return geminiApiService.generateContent(prompt).block();
     }
