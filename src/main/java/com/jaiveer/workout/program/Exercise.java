@@ -20,6 +20,8 @@ public class Exercise {
     private int sets;
     @Column(nullable = false)
     private String repetitions;
+    @Column(length = 1000) // Adjust the length here
     private String description;
+    private String restTime;
     private int weight;
 }
