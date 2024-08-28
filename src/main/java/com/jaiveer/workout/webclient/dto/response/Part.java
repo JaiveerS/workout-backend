@@ -1,4 +1,4 @@
-package com.jaiveer.workout.webClient;
+package com.jaiveer.workout.webclient.dto.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

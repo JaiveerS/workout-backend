@@ -3,9 +3,9 @@ package com.jaiveer.workout.program;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jaiveer.workout.user.User;
 import com.jaiveer.workout.user.UserService;
-import com.jaiveer.workout.webClient.GeminiApiService;
-import com.jaiveer.workout.webClient.GeminiResponse;
-import com.jaiveer.workout.webClient.Part;
+import com.jaiveer.workout.webclient.GeminiApiService;
+import com.jaiveer.workout.webclient.dto.response.GeminiResponse;
+import com.jaiveer.workout.webclient.dto.response.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class ProgramService {
     //later have sample programs for gemini to use to build programs
     WorkoutProgram createWorkoutProgram(String prompt, String username) {
         User user = userService.getUser(username);
-        List<WorkoutProgram> workoutPrograms = userService.getUserProgram(username);
+        List<WorkoutProgram> workoutPrograms = userService.getWorkoutPrograms(username);
 
         GeminiResponse response = geminiApiService.generateContent(prompt);
         System.out.println(response.toString());
