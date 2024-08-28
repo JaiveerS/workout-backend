@@ -1,6 +1,5 @@
 package com.jaiveer.workout.user;
 
-import com.jaiveer.workout.program.Workout;
 import com.jaiveer.workout.program.WorkoutProgram;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,12 +29,16 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public List<WorkoutProgram> getWorkoutPrograms(String username){
+        return userRepository.findByUsername(username).getWorkoutPrograms();
+    }
+
     public User updateUser(User user){
         return userRepository.save(user);
     }
 
-    public List<WorkoutProgram> getUserProgram(String username){
-        return userRepository.findByUsername(username).getWorkoutPrograms();
-    }
+//    public List<WorkoutProgram> getUserProgram(String username){
+//        return userRepository.findByUsername(username).getWorkoutPrograms();
+//    }
 
 }
