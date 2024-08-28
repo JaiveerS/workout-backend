@@ -30,8 +30,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(username));
     }
 
-    @GetMapping("/program")
-    public ResponseEntity<List<WorkoutProgram>> program(@RequestBody String username) {
-        return ResponseEntity.ok(userService.getUserProgram(username));
+    @GetMapping("/programs/{username}")
+    public ResponseEntity<List<WorkoutProgram>> programs(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getWorkoutPrograms(username));
     }
+
+
+//    @GetMapping("/program")
+//    public ResponseEntity<List<WorkoutProgram>> program(@RequestBody String username) {
+//        return ResponseEntity.ok(userService.getUserProgram(username));
+//    }
 }
