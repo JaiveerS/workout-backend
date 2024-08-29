@@ -2,6 +2,8 @@ package com.jaiveer.workout.user;
 
 import com.jaiveer.workout.program.WorkoutProgram;
 import com.jaiveer.workout.security.JwtService;
+import com.jaiveer.workout.user.dto.request.LoginRequest;
+import com.jaiveer.workout.user.dto.response.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,4 +1,4 @@
-package com.jaiveer.workout.user;
+package com.jaiveer.workout.user.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
