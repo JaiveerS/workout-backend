@@ -3,6 +3,7 @@ package com.jaiveer.workout.program;
 import com.jaiveer.workout.webclient.GeminiApiService;
 import com.jaiveer.workout.webclient.dto.response.GeminiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +33,12 @@ public class ProgramController {
     //generates a program and assigns it to a user
     @PostMapping("/create/{username}")
     public ResponseEntity<WorkoutProgram> generate(@RequestBody String prompt,@PathVariable String username) {
-        return ResponseEntity.ok(programService.createWorkoutProgram(prompt, username));
+        return ResponseEntity.status(HttpStatus.CREATED).body(programService.createWorkoutProgram(prompt, username));
     }
 
     //just generates a program using gemini ai api
     @PostMapping("/generateContent")
-    public GeminiResponse generateContent(@RequestBody String prompt) {
-        return geminiApiService.generateContent(prompt);
+    public ResponseEntity<GeminiResponse> generateContent(@RequestBody String prompt) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(geminiApiService.generateContent(prompt));
     }
 }
