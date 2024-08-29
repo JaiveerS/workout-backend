@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -48,17 +49,10 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Set<Role> roles = new HashSet<>(Collections.singleton(Role.ROLE_USER));
-
-    @Override
-    public String toString(){
-        return username + " " + firstname + " " + lastname + " " + age + " " + gender + " " + weight + " " + email;
-    }
+    private Set<Role> roles = new HashSet<>(Collections.singletonList(Role.ROLE_USER));
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                        .collect(Collectors.toSet());
+        return this.getRoles();
     }
 }
