@@ -1,7 +1,7 @@
 package com.jaiveer.workout.program;
 
 
-import com.jaiveer.workout.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +17,8 @@ import java.util.List;
 public class WorkoutProgram {
     @Id
     @GeneratedValue
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Long programId;
     @Column(nullable = false)
     private Long userId;

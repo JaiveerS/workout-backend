@@ -1,5 +1,6 @@
 package com.jaiveer.workout.program;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +14,8 @@ import lombok.*;
 public class Exercise {
     @Id
     @GeneratedValue
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
     private Long exerciseId;
     @Column(nullable = false)
     private String exerciseName;

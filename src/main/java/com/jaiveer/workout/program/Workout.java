@@ -1,5 +1,6 @@
 package com.jaiveer.workout.program;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,8 @@ import java.util.List;
 public class Workout {
     @Id
     @GeneratedValue
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Long workoutId;
     private String workoutName;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
