@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +20,7 @@ public class JwtService {
     private int EXPIRATION;
 
     public String generateToken(UserDetails user) {
-        return generateToken(new HashMap<String, Object>(), user);
+        return generateToken(new HashMap<>(), user);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
@@ -49,7 +48,9 @@ public class JwtService {
     }
 
     public boolean isJwtValid(String jwt, UserDetails user) {
-        return extractUsername(jwt).equals(user.getUsername()) && !isJwtExpired(jwt);
+        String username = user.getUsername();
+        if (username == null) return false;
+        return extractUsername(jwt).equals(username) && !isJwtExpired(jwt);
     }
 
     public String extractUsername(String jwt) {
