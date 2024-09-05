@@ -2,10 +2,8 @@ package com.jaiveer.workout.program;
 
 import com.jaiveer.workout.program.dto.request.ProgramRequest;
 import com.jaiveer.workout.security.JwtService;
-import com.jaiveer.workout.user.UserService;
 import com.jaiveer.workout.webclient.GeminiApiService;
 import com.jaiveer.workout.webclient.dto.response.GeminiResponse;
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
