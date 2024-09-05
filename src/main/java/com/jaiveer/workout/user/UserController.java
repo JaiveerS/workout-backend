@@ -23,7 +23,7 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    //need to fix to use spring security
+    //creates and adds user to db
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
         User registeredUser = userService.registerUser(user);
@@ -34,19 +34,24 @@ public class UserController {
         return ResponseEntity.badRequest().body("User Registration failed. Try again.");
     }
 
+    //generates a jwt for valid users
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.loginUser(request));
     }
 
-    @GetMapping("/info/{username}")
-    public ResponseEntity<User> info(@PathVariable String username) {
-        return ResponseEntity.ok(userService.getUser(username));
+    //returns user details
+    @GetMapping("/info")
+    public ResponseEntity<User> info(@RequestHeader("Authorization") String authorizationHeader) {
+        String jwt = authorizationHeader.substring(7);
+        return ResponseEntity.ok(userService.getUserWithJwt(jwt));
     }
 
-    //for admin only
-    @GetMapping("/programs/{username}")
-    public ResponseEntity<List<WorkoutProgram>> programs(@PathVariable String username) {
+    //fetches users saved programs
+    @GetMapping("/programs")
+    public ResponseEntity<List<WorkoutProgram>> programs(@RequestHeader("Authorization") String authorizationHeader) {
+        String jwt = authorizationHeader.substring(7);
+        String username = jwtService.extractUsername(jwt);
         return ResponseEntity.ok(userService.getWorkoutPrograms(username));
     }
 }

@@ -25,10 +25,15 @@ public class ProgramService {
         this.geminiApiService = geminiApiService;
     }
 
-    //ask gemini ai to make a workout program and return it in json of a specifed format
+    //ask gemini AI to make a workout program and return it in json of a specified format
     //this will create the workout program
     //later have sample programs for gemini to use to build programs
-    WorkoutProgram createWorkoutProgram(String prompt, String username) {
+    WorkoutProgram createWorkoutProgramWithJwt(String prompt, String jwt) {
+        User user = userService.getUserWithJwt(jwt);
+        return createWorkoutProgram(prompt, user.getUsername());
+    }
+
+    WorkoutProgram createWorkoutProgram(String prompt, String username){
         User user = userService.getUser(username);
         List<WorkoutProgram> workoutPrograms = userService.getWorkoutPrograms(username);
 
@@ -36,9 +41,9 @@ public class ProgramService {
         System.out.println(response.toString());
         Part text = response.getCandidates().get(0).getContent().getParts().get(0);
         //comment this out
-        System.out.println(response.getCandidates().get(0).getContent().getParts().get(0).getText());
+        System.out.println(text);
 
-        WorkoutProgram workoutProgramTemp = null;
+        WorkoutProgram workoutProgramTemp;
         try {
             workoutProgramTemp = response.getCandidates().get(0).getContent().getParts().get(0).convertToWorkoutProgram();
             System.out.println("converted to workoutProgram");
